@@ -6,9 +6,9 @@ from sklearn.linear_model import Lasso
 from sklearn.tree import DecisionTreeRegressor
 from double_debias import DoubleDebias
 import numpy as np
-y=np.array([i for i in range(0,1000)])
-D=np.array([i//2 for i in range(0,1000)]).reshape(-1,1)
-z=np.array([[i**2 for i in range(0,1000)], [i**3 for i in range(0,1000)]]).transpose()
+y=np.array([i for i in range(0,100)])
+D=np.array([i//2 for i in range(0,100)]).reshape(-1,1)
+z=np.array([[i**2 for i in range(0,100)], [i**3 for i in range(0,100)]]).transpose()
 
 y_methods = [
     GradientBoostingRegressor(n_estimators=1000), 
@@ -17,25 +17,17 @@ y_methods = [
     Lasso(alpha=0.1, max_iter=1000), 
     DecisionTreeRegressor()
 ]
-print('n_folds=2')
-for y_method in y_methods:
-    dd = DoubleDebias( y=y,
-                   D=D,
-                   z=z,
-                   y_method= y_method,
-                   D_method= LinearRegression(),
-                   n_folds=2)
-    print(type(y_method))
-    print(dd.est_theta())
-    print('-------------------')
-print('n_folds=5')
-for y_method in y_methods:
-    dd = DoubleDebias( y=y,
-                   D=D,
-                   z=z,
-                   y_method= y_method,
-                   D_method= LinearRegression(),
-                   n_folds=5)
-    print(type(y_method))
-    print(dd.est_theta())
-    print('-------------------')
+n_folds = [2,5,20]
+for n_fold in n_folds:
+    print('n_fold:', n_fold)
+    for y_method in y_methods:
+        dd = DoubleDebias( y=y,
+                    D=D,
+                    z=z,
+                    y_method= y_method,
+                    D_method= LinearRegression(),
+                    n_folds=n_fold)
+        print(type(y_method))
+        print(dd.est_theta())
+        print('-------------------')
+    
